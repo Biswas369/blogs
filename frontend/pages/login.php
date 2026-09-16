@@ -7,7 +7,7 @@
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
   <style>
     body{
     background:white;
@@ -49,7 +49,7 @@
 
   <div class="container ">
     <div class="row-12">
-      <form onsubmit=" return validation()" action="login_process.php" method="POST" class="w-50 shadow p-4 p-md-5 m-auto loginForm ">
+      <form onsubmit=" return validation()" action="../../backend/actions/login_process.php" method="POST" class="w-50 shadow p-4 p-md-5 m-auto loginForm ">
         <h1 class="text-center mb-5">Login</h1>
 
         <label for="email">Email:</label>

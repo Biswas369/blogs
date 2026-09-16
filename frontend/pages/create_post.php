@@ -1,6 +1,6 @@
 <?php
   session_start();
-  include "db.php";
+  include __DIR__ . '/../../backend/config/db.php';
 
   if(!isset($_SESSION['user_id'])){
     header("location: login.php");
@@ -18,7 +18,7 @@
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="../assets/css/style.css?v=2">
   <style>
       
       body {
@@ -235,7 +235,7 @@
         <div class="shadow w-50 m-auto p-4 p-md-5 createForm">
 
           <h2 class="text-center  pb-5">Create Blogs</h2>
-          <form action="insert_post.php" method="POST" enctype="multipart/form-data">
+          <form action="../../backend/actions/insert_post.php" method="POST" enctype="multipart/form-data">
             <label for="title">Title :</label>
             <input type="text" name="title" id="title" class="w-100"><br><br>
 

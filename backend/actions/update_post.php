@@ -1,5 +1,5 @@
 <?php
-include "db.php";
+include __DIR__ . '/../config/db.php';
 
 $id = $_POST['id'];
 $title = $_POST['title'];
@@ -9,7 +9,7 @@ $image = $_FILES['image']['name'];
 $tmp = $_FILES['image']['tmp_name'];
 
 if($image){
-    move_uploaded_file($tmp,"uploads/".$image);
+    move_uploaded_file($tmp, __DIR__ . "/../../frontend/uploads/".$image);
     $sql = "UPDATE posts SET title='$title', image='$image', content='$content' WHERE id='$id'";
 }else{
     $sql = "UPDATE posts SET title='$title', content='$content' WHERE id='$id'";
@@ -17,5 +17,5 @@ if($image){
 
 mysqli_query($conn,$sql);
 
-header("location: my_posts.php");
+header("location: ../../frontend/pages/my_posts.php");
 ?>

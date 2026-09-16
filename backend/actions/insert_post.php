@@ -1,8 +1,8 @@
 <?php
   session_start();
-  include "db.php";
+  include __DIR__ . '/../config/db.php';
   if(!isset($_SESSION['user_id'])){
-    header("location: login.php");
+    header("location: ../../frontend/pages/login.php");
     exit;
   }
   $title = $_POST['title'];
@@ -11,7 +11,7 @@
 
   $image = $_FILES['image']['name'];
   $tmp_name = $_FILES['image']['tmp_name'];
-  $folder = "uploads/" .$image;
+  $folder = __DIR__ . "/../../frontend/uploads/" .$image;
   move_uploaded_file($tmp_name, $folder);
 
 
@@ -21,12 +21,12 @@
   if($result){
     echo "<script> 
     alert('New post create Successfully.');
-    window.location.href = 'dashboard.php';
+    window.location.href = '../../frontend/pages/dashboard.php';
     </script>";
   }else{
      echo "<script> 
     alert('Error: not work.');
-    window.location.href = 'dashboard.php';
+    window.location.href = '../../frontend/pages/dashboard.php';
     </script>";
   }
 

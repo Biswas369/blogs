@@ -1,28 +1,53 @@
 <?php
-  session_start();
-  if(!isset($_SESSION['user_id'])){
-    header("location: login.php");
-    exit;
+  include __DIR__ . '/../../backend/config/db.php';
+
+  // pagination
+  $limit = 6;
+  if(isset($_GET['page'])){
+    $page = $_GET['page'];
+  }else{
+    $page = 1;
   }
+
+  $offset = ($page - 1) * $limit;
+
+  if(isset($_GET['search'])){
+
+    $search = $_GET['search'];
+    $sql = "SELECT posts.*, users.name FROM posts
+      JOIN users ON posts.user_id = users.id
+      WHERE posts.title LIKE '%$search%' 
+      ORDER BY posts.id DESC
+      LIMIT $limit OFFSET $offset";
+
+  }else{
+    $sql = "SELECT posts.*, users.name FROM posts 
+    JOIN users ON posts.user_id = users.id
+    ORDER BY posts.id DESC
+    LIMIT $limit OFFSET $offset";
+  }
+
+  $result = mysqli_query($conn, $sql);
+
 ?>
 
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>My Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-
-  <link rel="stylesheet" href="./css/chatbot.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="../assets/images/favicon.ico">
+  <link rel="stylesheet" href="../assets/css/style.css?v=2">
+  <link rel="stylesheet" href="../assets/css/chatbot.css">
   <style>
       body {
   font-family: Arial, sans-serif;
-  background: white;
+  background: #eef2f7;
 }
 
 /* Chat Icon Button */
@@ -168,6 +193,7 @@
 
 @media only screen and (min-width:200px) and (max-width:575px) {
   .chat-box {
+
     right: 0;
     width: 100%;
     margin: auto;
@@ -194,6 +220,11 @@
       
       
       
+      
+    body {
+      background: white;
+    }
+
     header {
       background: #2e239f;
       color: white;
@@ -205,37 +236,86 @@
     }
 
     main {
-      margin-top: 100px;
+      margin-top: 190px;
 
+    }
+
+    nav a:hover {
+      color: rgb(255, 255, 255);
     }
 
     header a {
       color: white;
       text-decoration: none;
-
     }
 
-    header a:hover {
-      color: rgb(255, 255, 255);
+
+
+    header h1 {
+      margin-bottom: -10px;
     }
 
-    .dashBox {
+    .card {
 
-      border-radius: 0.75rem;
-      border: none;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-size: 1.3rem;
-      font-weight: 550;
-
+      background-color: white;
+      border-radius: .75rem;
+      transition: 0.3s ease;
+      cursor: pointer;
     }
 
-    .dashBox:hover {
-      color: rgb(17, 13, 60);
+    .card:hover {
       transform: scale(1.08) translateY(-5px);
+    }
 
+    .card-body {
+      background: white;
+      border-radius: 0rem 0rem 0.75rem 0.75rem;
+      border: none;
+    }
+
+    .searchForm {
+      width: 50%;
+    }
+
+    #search {
+      outline: none;
+      padding: 6px 12px;
+      max-width: 20rem;
+      width: 100%;
+      border-radius: 5px 0px 0px 5px;
+      border: 1px solid #d6d6d6;
 
     }
+
+    .searchBtn {
+      border: none;
+      background: #d1d1dd;
+      padding: 7px;
+      border-radius: 0px 5px 5px 0px;
+
+    }
+
+    .creator {
+      font-size: 14px;
+      color: gray;
+
+    }
+
+    .card h3 {
+      font-weight: 550;
+    }
+
+    h2 {
+      font-weight: 550;
+      color: darkblue;
+    }
+
+    main {
+      margin-top: 190px;
+
+    }
+
+
 
     @media only screen and (min-width:200px) and (max-width:575px) {
       .logo {
@@ -245,6 +325,12 @@
       .searchForm {
         display: flex;
         width: 100%;
+      }
+
+      .creator {
+        font-size: 8px;
+        color: gray;
+        margin: 0px;
       }
     }
 
@@ -270,11 +356,12 @@
 </head>
 
 <body>
+
   <header class="container-fluid shadow p-0">
     <div class="container">
       <div class="row">
         <div class="col-2 ">
-          <img src="logo.png" alt="logo" class="w-50 logo ">
+          <img src="../assets/images/logo.png" alt="logo" class="w-50 logo ">
         </div>
         <div class="col-8 col-md-7  text-center d-flex align-items-center justify-content-center">
           <h1 class="text-center m-0">Blog Website</h1>
@@ -282,37 +369,91 @@
         <div class="col-md-3 d-flex align-items-center justify-content-end ">
           <nav class="text-end  d-flex gap-lg-5 gap-3 pe-2">
             <a href="index.php">Home</a>
-            <a href="logout.php ">Logout</a>
+            <a href="login.php">Login</a>
+            <a href="register.php">Register</a>
           </nav>
         </div>
       </div>
 
+    </div>
+    <div class="w-100 text-end p-2 bg-light">
+      <div class="row">
+        <div class=" d-flex justify-content-between">
+          <h2 class="m-0 ps-5 d-none d-lg-block">Latest Posts</h2>
+          <form action="index.php" method="GET" class="searchForm ">
+            <input type="text" name="search" id="search" placeholder="Search here">
+            <button type="submit" class="searchBtn">Search</button>
+          </form>
+        </div>
+      </div>
     </div>
 
 
   </header>
 
 
-
-
-
   <main class="container">
-    <div class="row">
-      <div class="col-12 p-5">
-        <h1>Welcome
-          <?php echo $_SESSION['user_name']; ?>
-        </h1>
+
+
+
+
+
+
+
+
+    <div class="post ">
+      <div class="row">
+        <?php while($row = mysqli_fetch_assoc($result)){ ?>
+        <div class="col-12 col-sm-6 col-md-6 col-lg-4 p-2 p-lg-4">
+          <div class="card h-100 shadow">
+            <img src="../uploads/<?php echo $row['image']; ?>" class="card-img-top" alt="" width="200">
+            <div class="card-body">
+              <h3 class="card-title text-center p-1 pb-3 m-0">
+                <?php echo $row['title']; ?>
+              </h3>
+              <p class="card-text creator text-end">
+                <?php echo $row['name']; ?> |
+                <?php echo $row['created_at']; ?>
+              </p>
+              <p class="card-text " style="white-space: pre-line;">
+                <?php echo substr($row['content'],0,100) ?> .......
+              </p>
+              <a href="post.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+        <?php } ?>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-12 d-flex gap-3 gap-lg-5 ">
-        <a href="create_post.php" class="p-5 shadow dashBox">Create Now</a>
-        <a href="my_posts.php" class="p-5 shadow dashBox">My Posts</a>
+
+
+
+      <!-- total page calculate gareko  -->
+      <!-- total page calculate gareko  -->
+      <?php
+  $sql_total = "SELECT COUNT(*) as total FROM posts";
+  $res_total = mysqli_query($conn, $sql_total);
+  $data = mysqli_fetch_assoc($res_total);
+
+  $total_posts = $data['total'];
+  $total_pages = ceil($total_posts / $limit);
+
+  
+?>
+      <div aria-label="Page navigation" class="mt-md-5">
+        <ul class="pagination justify-content-center">
+          <?php
+      for($i = 1; $i <= $total_pages; $i++){
+        // Add active class for current page (optional)
+        $active = (isset($_GET['page']) && $_GET['page'] == $i) ? 'active' : '';
+        echo "<li class='page-item $active'><a class='page-link' href='index.php?page=$i'>$i</a></li>";
+      }
+    ?>
+        </ul>
       </div>
+
 
     </div>
   </main>
-
 
 
   <!-- for chatbot -->
@@ -330,7 +471,8 @@
     </div>
   </div>
 
-  <footer class="mt-5">
+
+  <footer class="mt-md-5">
     <div class="row p-4 text-white m-0">
       <div class="col-12 text-center">
         &copy; Quantum-Gen. All Rights Reserved.
@@ -338,7 +480,6 @@
       </div>
     </div>
   </footer>
-
 
   <script>
     

@@ -1,32 +1,40 @@
 <?php
-  session_start();
-  include "db.php";
-  if(!isset($_SESSION['user_id'])){
-    header("location: login.php");
-    exit;
-  }
-  $user_id = $_SESSION['user_id'];
-  $sql = "SELECT * FROM posts WHERE user_id = '$user_id'";
+  include __DIR__ . '/../../backend/config/db.php';
+  $id = $_GET['id'];
+  $sql = "SELECT posts.*, users.name FROM posts
+    JOIN users ON posts.user_id = users.id
+   WHERE posts.id='$id'";
   $result = mysqli_query($conn, $sql);
 
+  $post = mysqli_fetch_assoc($result);
+
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 
-  <link rel="stylesheet" href="./css/chatbot.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../assets/css/chatbot.css">
+  <link rel="stylesheet" href="../assets/css/style.css?v=2">
   <style>
+      header {
+      background: #2e239f;
+      color: white;
+      padding: 0px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2;
+    }
       body {
+          
   font-family: Arial, sans-serif;
   background: white;
 }
@@ -203,43 +211,39 @@
       
       
       
-    header {
-      background: #2e239f;
-      color: white;
-      padding: 0px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 2;
-    }
-
-    main {
-      margin-top: 100px;
-
-    }
-
     nav a {
-      color: rgb(255, 255, 255);
+      color: white;
       text-decoration: none;
     }
 
     nav a:hover {
-      color: rgb(255, 255, 255);
+      color: white;
     }
 
-    .card-body {
-      max-height: 100rem;
-      height: 100%;
+    main {
+      margin-top: 160px;
     }
 
-    .card-title {
-      max-height: 20rem;
-      height: 100%;
-      overflow-y: scroll;
+    #search {
+      outline: none;
+      padding: 6px 12px;
+      max-width: 20rem;
+      width: 100%;
+      border-radius: 5px 0px 0px 5px;
+      border: 1px solid #d6d6d6;
+
     }
 
-    .cardFootre {
-      background: #d2ffd2;
+    .searchBtn {
+      border: none;
+      background: #d1d1dd;
+      padding: 7px;
+      border-radius: 0px 5px 5px 0px;
+
+    }
+
+    h2 {
+      color: black;
     }
 
     @media only screen and (min-width:200px) and (max-width:575px) {
@@ -249,6 +253,16 @@
 
       .searchForm {
         display: flex;
+        width: 100%;
+      }
+
+      .creator {
+        font-size: 8px;
+        color: gray;
+        margin: 0px;
+      }
+
+      .text-center img {
         width: 100%;
       }
     }
@@ -275,24 +289,36 @@
 </head>
 
 <body>
+
   <header class="container-fluid shadow p-0">
     <div class="container">
       <div class="row">
         <div class="col-2 ">
-          <img src="logo.png" alt="logo" class="w-50 logo ">
+          <img src="../assets/images/logo.png" alt="logo" class="w-50 logo ">
         </div>
         <div class="col-8 col-md-7  text-center d-flex align-items-center justify-content-center">
           <h1 class="text-center m-0">Blog Website</h1>
         </div>
         <div class="col-md-3 d-flex align-items-center justify-content-end ">
           <nav class="text-end  d-flex gap-lg-5 gap-3 pe-2">
-            <a href="dashboard.php">Dashboard</a>
             <a href="index.php">Home</a>
-            <a href="logout.php">LogOut</a>
+            <a href="login.php">Login</a>
+            <a href="register.php">Register</a>
           </nav>
         </div>
       </div>
 
+    </div>
+    <div class="w-100 text-end p-2 bg-light">
+      <div class="row">
+        <div class=" d-flex justify-content-between">
+          <h2 class="m-0 ps-5 d-none d-lg-block ">Latest Posts</h2>
+          <form action="index.php" method="GET" class="searchForm d-flex">
+            <input type="text" name="search" id="search" placeholder="Search here">
+            <button type="submit" class="searchBtn">Search</button>
+          </form>
+        </div>
+      </div>
     </div>
 
 
@@ -300,49 +326,31 @@
 
 
 
+  <main class="container p-3 p-lg-5">
+    <div class="shadow p-3  p-lg-5">
+      <h1 class="text-center">
+        <?php echo $post['title']; ?>
+      </h1>
+      <p class="text-end text-secondary creator">
+        By
+        <?php echo $post['name']; ?> |
+        <?php echo $post['created_at']; ?>
+      </p>
+      <div class="text-center mt-2">
+        <img src="../uploads/<?php echo $post['image']; ?>" alt="" width="700" class="w-100">
 
-
-
-
-  <main>
-
-
-
-    <div class="container mt-5">
-      <h2>My Posts</h2>
-      <div class="row">
-        <?php
-      while($row = mysqli_fetch_assoc($result)){ ?>
-
-        <div class="col-md-6 col-lg-4 mb-4 p-3">
-          <div class="card shadow">
-            <div class="card-body">
-              <h3 class="card-title text-center mb-4">
-                <?php echo $row['title']; ?>
-              </h3>
-              <div class="">
-                <img src="uploads/<?php echo $row['image']; ?>" class="img-fluid" alt="">
-              </div>
-              <h5 class="card-title mb-2 pt-4 pb-4" style="white-space: pre-line;">
-                <strong>Details:</strong><br><br>
-                <?php echo $row['content']; ?>
-              </h5>
-            </div>
-            <div class="d-flex justify-content-between pt-2 cardFootre">
-              <div class="ps-3 ">
-                <a href="edit_post.php?id=<?php echo $row['id']; ?>" class="btn btn-primary btn-sm">Edit</a>&ensp;
-                <a href="delete_post.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm"
-                  onclick="return confirm('Are you sure Delete this post ?');">Delete</a>
-              </div>
-              <p class="text-secondary pe-3">Scroable Content</p>
-            </div>
-          </div>
-        </div>
-
-        <?php } ?>
       </div>
+
+      <p class="p-lg-5" style="white-space: pre-line;">
+        <?php echo $post['content']; ?>
+      </p>
     </div>
+
+
+
   </main>
+
+
 
 
   <!-- for chatbot -->
@@ -371,7 +379,10 @@
     </div>
   </footer>
 
-  <script>
+
+
+  <script src="../assets/js/chatbot.js"></script>
+    <script>
     
 // Toggle Chat Box
 function toggleChat() {

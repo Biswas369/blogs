@@ -1,6 +1,6 @@
 <?php
   session_start();
-  include 'db.php';
+  include __DIR__ . '/../config/db.php';
   $email = $_POST['email'];
   $password = $_POST['password'];
 
@@ -10,12 +10,12 @@
     $user = mysqli_fetch_assoc($reuslt);
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['user_name'] = $user['name'];
-    header("location: dashboard.php");
+    header("location: ../../frontend/pages/dashboard.php");
     exit;
   }else{
     echo "<script>
     alert('Invalid email or password');
-    window.location.href='login.php';
+    window.location.href='../../frontend/pages/login.php';
     </script>";
     }
 

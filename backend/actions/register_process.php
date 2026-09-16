@@ -1,5 +1,5 @@
 <?php
-  include "db.php";
+  include __DIR__ . '/../config/db.php';
   $name = $_POST['name'];
   $email = $_POST['email'];
   $password = $_POST['password'];
@@ -10,7 +10,7 @@
     echo "
     <script>
       alert('Register Successfull.');
-      window.location.href = 'login.php';
+      window.location.href = '../../frontend/pages/login.php';
     </script> ";
   }else{
     echo "Error: ";
