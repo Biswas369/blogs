@@ -1,0 +1,68 @@
+:root {
+  --primary: blue;
+  --secondary: rgb(14, 14, 68);
+}
+
+body {
+  font-family: Arial;
+  background: white;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  flex: 1;
+}
+
+
+
+
+
+
+
+
+footer {
+  background: #000;
+  margin-top: auto;
+}
+
+
+header {
+  background: #2e239f;
+  color: white;
+  padding: 0px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+nav a:hover {
+  color: rgb(255, 255, 255);
+}
+
+footer {
+  background: var(--secondary);
+}
+
+.card-body {
+  background: #fafffb;
+
+}
+
+
+
+
+
+
+
+
+#search {
+  outline: none;
+  padding: 3px 5px;
+  max-width: 20rem;
+  width: 100%;
+}
